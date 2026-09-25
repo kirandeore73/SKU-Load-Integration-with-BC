@@ -49,36 +49,6 @@ codeunit 72034 "Inventory Update Hybris Mgt"
             until Item.Next() = 0;
     end;
 
-    procedure DeleteAllInventorySnapshotBuffers(): Integer
-    var
-        SnapshotBuffer: Record "InvSnapshotHybrisBuff";
-        Counter: Integer;
-    begin
-        SnapshotBuffer.Reset();
-        if SnapshotBuffer.FindSet() then
-            repeat
-                Counter += 1;
-                SnapshotBuffer.Delete(true);
-            until SnapshotBuffer.Next() = 0;
-
-        exit(Counter);
-    end;
-
-    procedure DeleteAllInventoryDeltaBuffers(): Integer
-    var
-        DeltaBuffer: Record "InvDeltaHybrisBuff";
-        Counter: Integer;
-    begin
-        DeltaBuffer.Reset();
-        if DeltaBuffer.FindSet() then
-            repeat
-                Counter += 1;
-                DeltaBuffer.Delete(true);
-            until DeltaBuffer.Next() = 0;
-
-        exit(Counter);
-    end;
-
     local procedure CleanupSnapshotRowsForDeletedItems()
     var
         SnapshotBuffer: Record "InvSnapshotHybrisBuff";

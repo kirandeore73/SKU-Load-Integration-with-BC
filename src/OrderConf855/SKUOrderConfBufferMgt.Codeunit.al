@@ -27,28 +27,6 @@ codeunit 72010 "SKU Order Conf Buffer Mgt"
         OrderConfLineBuffer.DeleteAll(true);
     end;
 
-    procedure DeleteAllOrderConfBuffers(): Integer
-    var
-        OrderConfBuffer: Record "SKU Order Conf Buffer";
-        OrderConfLineBuffer: Record "SKU Order Conf Line Buffer";
-        Counter: Integer;
-    begin
-        OrderConfLineBuffer.Reset();
-        if OrderConfLineBuffer.FindSet(true) then
-            repeat
-                OrderConfLineBuffer.Delete(true);
-            until OrderConfLineBuffer.Next() = 0;
-
-        OrderConfBuffer.Reset();
-        if OrderConfBuffer.FindSet() then
-            repeat
-                Counter += 1;
-                OrderConfBuffer.Delete(true);
-            until OrderConfBuffer.Next() = 0;
-
-        exit(Counter);
-    end;
-
     procedure LoadFromSalesOrder(var OrderConfBuffer: Record "SKU Order Conf Buffer")
     var
         SalesHeader: Record "Sales Header";
@@ -134,23 +112,6 @@ codeunit 72010 "SKU Order Conf Buffer Mgt"
         LoadFromSalesOrder(OrderConfBuffer);
         OrderConfBuffer.Modify(true);
         exit(true);
-    end;
-
-    procedure PopulateFromAllSalesOrders(FromDate: Date; ToDate: Date): Integer
-    var
-        SalesHeader: Record "Sales Header";
-        Counter: Integer;
-    begin
-        SalesHeader.SetRange("Document Type", SalesHeader."Document Type"::Order);
-        SalesHeader.SetFilter("Order Date", '%1..%2', FromDate, ToDate);
-
-        if SalesHeader.FindSet() then
-            repeat
-                if CreateFromSalesOrder(SalesHeader) then
-                    Counter += 1;
-            until SalesHeader.Next() = 0;
-
-        exit(Counter);
     end;
 
     var

@@ -33,20 +33,6 @@ codeunit 72019 "SKU Invoice Buffer Mgt"
         exit(true);
     end;
 
-    procedure PopulateFromPostedInvoices(FromDate: Date; ToDate: Date): Integer
-    var
-        InvoiceHeader: Record "Sales Invoice Header";
-        Counter: Integer;
-    begin
-        InvoiceHeader.SetFilter("Posting Date", '%1..%2', FromDate, ToDate);
-        if InvoiceHeader.FindSet() then
-            repeat
-                if CreateFromPostedInvoice(InvoiceHeader."No.") then
-                    Counter += 1;
-            until InvoiceHeader.Next() = 0;
-        exit(Counter);
-    end;
-
     local procedure LoadFromInvoice(var InvoiceBuffer: Record "SKU Invoice Buffer"; InvoiceHeader: Record "Sales Invoice Header")
     var
         GeneralLedgerSetup: Record "General Ledger Setup";

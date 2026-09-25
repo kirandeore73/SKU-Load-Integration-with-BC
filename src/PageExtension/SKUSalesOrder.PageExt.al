@@ -12,6 +12,7 @@ pageextension 72002 "SKU Sales Order" extends "Sales Order"
             }
             field("Order Cancelled"; Rec."Order Cancelled")
             {
+                visible = false;
                 ApplicationArea = All;
                 Editable = CanEditHybrisStatusFields;
                 ToolTip = 'Specifies if the order is cancelled for Hybris order status reporting.';
@@ -36,6 +37,7 @@ pageextension 72002 "SKU Sales Order" extends "Sales Order"
             }
             field("EDI Web Order No."; Rec."EDI Web Order No.")
             {
+                visible = false;
                 ApplicationArea = All;
                 Editable = CanEditHybrisStatusFields;
                 ToolTip = 'Specifies the EDI web order number for Hybris order status reporting.';

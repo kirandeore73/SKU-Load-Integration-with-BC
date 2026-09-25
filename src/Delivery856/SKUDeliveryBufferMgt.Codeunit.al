@@ -33,68 +33,6 @@ codeunit 72006 "SKU Delivery Buffer Mgt"
         DeliveryLineBuffer.DeleteAll(true);
     end;
 
-    procedure DeleteAllDeliveryBuffers(): Integer
-    var
-        DeliveryBuffer: Record "SKU Delivery Buffer";
-        DeliveryLineBuffer: Record "SKU Delivery Line Buffer";
-        Counter: Integer;
-    begin
-        DeliveryLineBuffer.Reset();
-        if DeliveryLineBuffer.FindSet(true) then
-            repeat
-                DeliveryLineBuffer.Delete(true);
-            until DeliveryLineBuffer.Next() = 0;
-
-        DeliveryBuffer.Reset();
-        if DeliveryBuffer.FindSet() then
-            repeat
-                Counter += 1;
-                DeliveryBuffer.Delete(true);
-            until DeliveryBuffer.Next() = 0;
-
-        exit(Counter);
-    end;
-
-    procedure CreateTemporaryTestDeliveryBuffer()
-    var
-        DeliveryBuffer: Record "SKU Delivery Buffer";
-        DeliveryLineBuffer: Record "SKU Delivery Line Buffer";
-        CreationDateTime: DateTime;
-        DeliveryDateTime: DateTime;
-    begin
-        DeliveryBuffer.SetRange("Shipment No.", 'S-SHPT152956');
-        if DeliveryBuffer.FindFirst() then begin
-            DeliveryLineBuffer.SetRange("Document Id", DeliveryBuffer.Id);
-            DeliveryLineBuffer.DeleteAll(true);
-            DeliveryBuffer.Delete(true);
-        end;
-
-        DeliveryBuffer.Init();
-        DeliveryBuffer."Shipment No." := 'SHPT152956';
-        DeliveryBuffer."SAP Purchase Order No." := '4500019250';
-        Evaluate(CreationDateTime, '2026-09-08T16:44:34.23Z');
-        Evaluate(DeliveryDateTime, '2026-09-08T00:00:00Z');
-        DeliveryBuffer."Creation DateTime" := CreationDateTime;
-        DeliveryBuffer."Delivery DateTime" := DeliveryDateTime;
-        DeliveryBuffer."Sender Internal ID" := '1711';
-        DeliveryBuffer."Recipient Internal ID" := '1057084';
-        deliveryBuffer."Package Tracking No." := 'TRK_S158057';
-
-        DeliveryBuffer.Insert(true);
-
-        DeliveryLineBuffer.Init();
-        DeliveryLineBuffer."Delivery Entry No." := DeliveryBuffer."Entry No.";
-        DeliveryLineBuffer."Line No." := 10000;
-        DeliveryLineBuffer."Document Id" := DeliveryBuffer.Id;
-        DeliveryLineBuffer."Buyer Product ID" := 'A10004023';
-        DeliveryLineBuffer.Quantity := 1.00;
-        DeliveryLineBuffer."Unit of Measure Code" := 'EA';
-        DeliveryLineBuffer."SAP Purchase Order No." := '4500019250';
-        DeliveryLineBuffer."SAP PO Line No." := 10;
-        DeliveryLineBuffer."SAP Sales Order No." := 'FP00018358';
-        DeliveryLineBuffer.Insert(true);
-    end;
-
     procedure LoadFromShipment(var DeliveryBuffer: Record "SKU Delivery Buffer"): Boolean
     var
         SalesShipmentHeader: Record "Sales Shipment Header";

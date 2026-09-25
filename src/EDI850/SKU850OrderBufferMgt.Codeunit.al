@@ -105,7 +105,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
         ErrorText: Text;
         SuccessMsg: Text;
         OrderNo: Code[20];
-        DocumentId: Guid;
     begin
         ClearLastError();
         if ShouldSkipClosed860(OrderBuffer) then
@@ -113,7 +112,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
 
         if TryProcessOrder(OrderBuffer) then begin
             OrderNo := OrderBuffer."Order No.";
-            DocumentId := OrderBuffer.Id;
             // Set success message based on ActionCode (850 create vs. 860 update)
             if OrderBuffer."Action Code" = '02' then
                 SuccessMsg := StrSubstNo(OrderUpdatedTxt, OrderNo)
@@ -122,7 +120,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
             WriteLog(OrderBuffer, true, SuccessMsg);
             // Commit the order and 855 buffer before removing processed 850/860 staging records.
             Commit();
-            // DeleteBufferRecords(DocumentId);
             exit(OrderNo);
         end;
 
@@ -223,14 +220,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
         exit(OrderConfBufferMgt.CreateFromSalesOrder(SalesHeader));
     end;
 
-    local procedure GetSalesHeader(OrderNo: Code[20]): Record "Sales Header"
-    var
-        SalesHeader: Record "Sales Header";
-    begin
-        SalesHeader.Get(SalesHeader."Document Type"::Order, OrderNo);
-        exit(SalesHeader);
-    end;
-
     local procedure CheckCustomerSpecified(var OrderBuffer: Record "SKU 850 Order Buffer")
     var
         Customer: Record Customer;
@@ -249,25 +238,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
         Customer.Get(CustomerNo);
         if not Customer."Auto Sales Order" then
             Error(AutoSalesOrderRequiredErr, Customer."No.");
-    end;
-
-    local procedure FindCustomerByBuyerPartyId(BuyerPartyId: Code[20]): Code[20]
-    var
-        Customer: Record Customer;
-    begin
-        if BuyerPartyId = '' then
-            exit('');
-
-        // Direct match: BC customer No. = SAP BuyerPartyID — no setup required.
-        if Customer.Get(BuyerPartyId) then
-            exit(Customer."No.");
-
-        // Fallback: custom cross-reference field for environments where numbers differ.
-        Customer.SetRange("SAP Buyer Party ID", BuyerPartyId);
-        if Customer.FindFirst() then
-            exit(Customer."No.");
-
-        exit('');
     end;
 
     local procedure GetExistingSalesOrder(var OrderBuffer: Record "SKU 850 Order Buffer"; var SalesHeader: Record "Sales Header"): Boolean
@@ -607,22 +577,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
         exit('');
     end;
 
-    // local procedure FindItemByCustomerReference(ReferenceNo: Text; CustomerNo: Code[20]): Code[20]
-    // var
-    //     ItemReference: Record "Item Reference";
-    // begin
-    //     if (ReferenceNo = '') or (CustomerNo = '') then
-    //         exit('');
-
-    //     ItemReference.SetRange("Reference Type", ItemReference."Reference Type"::Customer);
-    //     ItemReference.SetRange("Reference Type No.", CustomerNo);
-    //     ItemReference.SetRange("Reference No.", CopyStr(ReferenceNo, 1, MaxStrLen(ItemReference."Reference No.")));
-    //     if ItemReference.FindFirst() then
-    //         exit(ItemReference."Item No.");
-
-    //     exit('');
-    // end;
-
     // Mapping rule: UnitPrice = UnitPrice - ((DRV1 * -1) / Qty)
     local procedure CalculateUnitPrice(var OrderLineBuffer: Record "SKU 850 Order Line Buffer"): Decimal
     begin
@@ -638,21 +592,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
         // Reuse ApplyHeaderValues and ApplyLines (which deletes old lines and creates new ones)
         ApplyHeaderValues(OrderBuffer, SalesHeader);
         ApplyLines(OrderBuffer, SalesHeader);
-    end;
-
-    local procedure DeleteBufferRecords(DocumentId: Guid)
-    var
-        OrderLineBuffer: Record "SKU 850 Order Line Buffer";
-        OrderBuffer: Record "SKU 850 Order Buffer";
-    begin
-        // Delete all line buffer records for this order
-        OrderLineBuffer.SetRange("Document Id", DocumentId);
-        OrderLineBuffer.DeleteAll(true);
-
-        // Delete the header buffer record
-        OrderBuffer.SetRange(Id, DocumentId);
-        if OrderBuffer.FindFirst() then
-            OrderBuffer.Delete(true);
     end;
 
     local procedure FindOrCreateShipToAddress(var OrderBuffer: Record "SKU 850 Order Buffer"; CustomerNo: Code[20]): Code[10]

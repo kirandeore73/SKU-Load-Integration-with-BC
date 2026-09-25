@@ -30,25 +30,6 @@ codeunit 72035 "Order Status SFDC Mgt"
         CreateFromSalesHeader(SalesHeader);
     end;
 
-    procedure DeleteAllOrderStatusSFDCBuffers(): Integer
-    var
-        LineBuffer: Record "OrderStatusUpdToSFDCLineBuff";
-        HeaderBuffer: Record "OrderStatusUpdToSFDCHdrBuff";
-        Counter: Integer;
-    begin
-        LineBuffer.Reset();
-        LineBuffer.DeleteAll(true);
-
-        HeaderBuffer.Reset();
-        if HeaderBuffer.FindSet() then
-            repeat
-                Counter += 1;
-                HeaderBuffer.Delete(true);
-            until HeaderBuffer.Next() = 0;
-
-        exit(Counter);
-    end;
-
     local procedure UpsertHeader(var SalesHeader: Record "Sales Header"; DocTypeCode: Code[1])
     var
         HeaderBuffer: Record "OrderStatusUpdToSFDCHdrBuff";

@@ -17,28 +17,6 @@ codeunit 72032 "Shipment Status SFDC Mgt"
     //         until SalesShipmentHeader.Next() = 0;
     // end;
 
-    procedure DeleteAllShipmentStatusSFDCBuffers(): Integer
-    var
-        ShipmentLineBuffer: Record "ShipStatusUpdateToSFDCLineBuff";
-        ShipmentHeaderBuffer: Record "ShipStatusUpdateToSFDCHdrBuff";
-        Counter: Integer;
-    begin
-        ShipmentLineBuffer.Reset();
-        if ShipmentLineBuffer.FindSet(true) then
-            repeat
-                ShipmentLineBuffer.Delete(true);
-            until ShipmentLineBuffer.Next() = 0;
-
-        ShipmentHeaderBuffer.Reset();
-        if ShipmentHeaderBuffer.FindSet() then
-            repeat
-                Counter += 1;
-                ShipmentHeaderBuffer.Delete(true);
-            until ShipmentHeaderBuffer.Next() = 0;
-
-        exit(Counter);
-    end;
-
     procedure CreateFromPostedShipment(SalesShipmentHeader: Record "Sales Shipment Header")
     var
         SalesShipmentLine: Record "Sales Shipment Line";
