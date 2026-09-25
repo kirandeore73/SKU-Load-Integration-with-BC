@@ -69,6 +69,7 @@ codeunit 72019 "SKU Invoice Buffer Mgt"
             GeneralLedgerSetup.Get();
             InvoiceBuffer."Currency Code" := GeneralLedgerSetup."LCY Code";
         end;
+        InvoiceHeader.CalcFields("Amount Including VAT");
         InvoiceBuffer."Amount Including VAT" := InvoiceHeader."Amount Including VAT";
         InvoiceBuffer."Sell-to Country/Region Code" := InvoiceHeader."Sell-to Country/Region Code";
         //  InvoiceBuffer."Tax Country" := InvoiceHeader."Sell-to Country/Region Code";

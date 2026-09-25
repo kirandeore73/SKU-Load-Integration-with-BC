@@ -50,6 +50,8 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
     var
         OrderBuffer: Record "SKU 850 Order Buffer";
         SalesHeader: Record "Sales Header";
+        HybrisOrderStatusMgt: Codeunit "Hybris Order Status Management";
+        OrderStatusSFDCMgt: Codeunit "Order Status SFDC Mgt";
     begin
         if OrderLineBuffer."Purchase Order Item ID" = 0 then
             exit;
@@ -73,8 +75,13 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
         if (OrderBuffer.Status = OrderBuffer.Status::Processed) and
            SalesHeader.Get(SalesHeader."Document Type"::Order, OrderBuffer."Order No.") then begin
             CreateSalesLine(OrderBuffer, OrderLineBuffer, SalesHeader);
-            if OrderBuffer."Action Code" = '01' then
+
+            if OrderBuffer."Action Code" = '01' then begin
                 CreateOrderAcknowledgement(OrderBuffer);
+                if not OrderStatusSFDCMgt.TryCreateFromSalesHeader(SalesHeader) then; // SFDC sync failures must not block the 850 insert
+                if OrderBuffer."Web Order No." <> '' then
+                    HybrisOrderStatusMgt.SendOrderStatusToHybris(SalesHeader);
+            end;
         end;
     end;
 
@@ -391,6 +398,7 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
         SalesHeader."EDI Shipping Account No." := OrderBuffer."Shipping Account Number";
         SalesHeader."EDI Ship Complete" := OrderBuffer."Ship Complete";
         SalesHeader."EDI Ship Early" := OrderBuffer."Ship Early";
+        SalesHeader."EDI Ship Partial" := OrderBuffer."Ship Partial";
         SalesHeader."EDI Shipping Notes" := OrderBuffer."Shipping Notes";
         SalesHeader."EDI Scheduled Shipment" := OrderBuffer."Scheduled Shipment";
         SalesHeader."EDI Freight" := OrderBuffer.Freight;
@@ -409,7 +417,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
         SalesHeader."EDI Discontinued Items" := OrderBuffer."Discontinued Items";
         SalesHeader."EDI Discont. Item Notes" := OrderBuffer."Discontinued Item Notes";
         SalesHeader."EDI Vendor Price" := OrderBuffer."Vendor Price";
-
         SalesHeader.Modify(true);
     end;
 
@@ -660,7 +667,6 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
             if ShipToAddress.FindFirst() then
                 ShipToAddressExists := true;
         end;
-
         if not ShipToAddressExists and (OrderBuffer."Address Id" = '') then begin
             ShipToAddress.Reset();
             ShipToAddress.SetRange("Customer No.", CustomerNo);
@@ -703,14 +709,12 @@ codeunit 72027 "SKU 850 Order Buffer Mgt"
     local procedure GetNextShipToCode(CustomerNo: Code[20]): Code[10]
     var
         ShipToAddress: Record "Ship-to Address";
-        Prefix: Code[6];
         SeqNo: Integer;
         NewCode: Code[10];
     begin
-        Prefix := CopyStr(CustomerNo + '_', 1, 6);
         SeqNo := 1;
         repeat
-            NewCode := CopyStr(Prefix + ConvertStr(Format(SeqNo, 5), ' ', '0'), 1, 10);
+            NewCode := ConvertStr(Format(SeqNo, 3), ' ', '0');
             SeqNo += 1;
         until not ShipToAddress.Get(CustomerNo, NewCode);
         exit(NewCode);

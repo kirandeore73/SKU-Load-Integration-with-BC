@@ -100,8 +100,14 @@ table 72011 "SKU Delivery Buffer"
     end;
 
     procedure GetShipmentNoForApi(): Code[20]
+    var
+        HyphenPosition: Integer;
     begin
-        exit(DelChr("Shipment No.", '=', '-'));
+        HyphenPosition := StrPos("Shipment No.", '-');
+        if HyphenPosition > 0 then
+            exit(CopyStr("Shipment No.", HyphenPosition + 1));
+
+        exit("Shipment No.");
     end;
 
     local procedure UpdateShipmentNo()

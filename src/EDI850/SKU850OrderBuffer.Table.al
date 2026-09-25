@@ -318,6 +318,10 @@ table 72025 "SKU 850 Order Buffer"
         {
             Caption = 'Store Number';
         }
+        field(94; "Ship Partial"; Boolean)
+        {
+            Caption = 'Ship Partial';
+        }
 
         // References Ship to address id
         field(100; "Address Id"; Code[20])

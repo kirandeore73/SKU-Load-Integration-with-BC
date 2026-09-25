@@ -32,5 +32,17 @@ tableextension 72004 "SKUSalesShptHeader" extends "Sales Shipment Header"
             Caption = 'Created From EDI 850';
             DataClassification = CustomerContent;
         }
+        // for salesorderdata - AddressId : maaped for Ship to code but ship to code will be our BC default code along with this unique field this will be unique identifaction of ship to address of SAP for each order
+        field(72054; "EDI Address Id"; Code[50])
+        {
+            Caption = 'EDI Ship-to Address Id';
+            DataClassification = CustomerContent;
+        }
+        //for salesorderdata - WebOrderNo
+        field(72055; "EDI Web Order No."; Code[35])
+        {
+            Caption = 'EDI Web Order No.';
+            DataClassification = CustomerContent;
+        }
     }
 }

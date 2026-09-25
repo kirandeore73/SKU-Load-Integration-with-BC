@@ -318,5 +318,37 @@ tableextension 72000 "SKUSalesHeader" extends "Sales Header"
             Caption = 'EDI Tax Jurisdiction Code';
             DataClassification = CustomerContent;
         }
+        field(72073; "Credit Hold"; Boolean)
+        {
+            Caption = 'Credit Hold';
+            DataClassification = CustomerContent;
+            InitValue = false;
+        }
+        field(72074; "Order Cancelled"; Boolean)
+        {
+            Caption = 'Order Cancelled';
+            DataClassification = CustomerContent;
+            InitValue = false;
+        }
+        field(72075; "EDI Hold Reason"; text[250])
+        {
+            Caption = 'EDI Hold Reason';
+            DataClassification = CustomerContent;
+        }
+        field(72076; "EDI Ship Partial"; Boolean)
+        {
+            Caption = 'EDI Ship Partial';
+            DataClassification = CustomerContent;
+        }
+        field(72077; "Credit Hold Date"; DateTime)
+        {
+            Caption = 'Credit Hold Date';
+            DataClassification = CustomerContent;
+        }
+        field(72078; "Credit Hold User"; Text[50])
+        {
+            Caption = 'Credit Hold User';
+            DataClassification = CustomerContent;
+        }
     }
 }

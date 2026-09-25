@@ -114,7 +114,7 @@ codeunit 72006 "SKU Delivery Buffer Mgt"
         DeliveryBuffer."Posting Date" := SalesShipmentHeader."Posting Date";
         DeliveryBuffer."Creation DateTime" := SalesShipmentHeader.SystemCreatedAt;
         DeliveryBuffer."Delivery DateTime" := CreateDateTime(SalesShipmentHeader."Posting Date", 053000T);
-        DeliveryBuffer."Package Tracking No." := 'TRK_S158060'; //SalesShipmentHeader."Package Tracking No.";
+        DeliveryBuffer."Package Tracking No." := SalesShipmentHeader."Package Tracking No."; // 'TRK_S158060';
 
         DeliveryBuffer."Sender Internal ID" := SalesShipmentHeader."SAP Sender Internal ID";
         DeliveryBuffer."Tax Jurisdiction Code" := SalesShipmentHeader."EDI Tax Jurisdiction Code";
@@ -140,8 +140,8 @@ codeunit 72006 "SKU Delivery Buffer Mgt"
             exit;
 
         SalesShipmentLine.SetRange("Document No.", DeliveryBuffer."Shipment No.");
-        // SalesShipmentLine.SetRange(Type, SalesShipmentLine.Type::Item);
-        // SalesShipmentLine.SetFilter(Quantity, '<>%1', 0);
+        SalesShipmentLine.SetRange(Type, SalesShipmentLine.Type::Item);
+        SalesShipmentLine.SetFilter(Quantity, '<>%1', 0);
 
         if SalesShipmentLine.FindSet() then
             repeat

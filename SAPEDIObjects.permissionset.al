@@ -1,4 +1,4 @@
-permissionset 72000 "All"
+permissionset 72000 "SKULoadIntegration"
 {
     Assignable = true;
     Caption = 'SKU Load Integration customization permissions', Locked = true;
@@ -46,5 +46,39 @@ permissionset 72000 "All"
          tabledata "IWX LP Line Usage" = R,
          tabledata "SKU Product Price Buffer" = RIMD,
          tabledata SKUIntegrationLog = RIMD,
-         tabledata SKUIntegrationSetup = RIMD;
+         tabledata SKUIntegrationSetup = RIMD,
+         tabledata "Order Status Hybris Buffer" = RIMD,
+         table "Order Status Hybris Buffer" = X,
+         codeunit "Hybris Order Status Management" = X,
+         codeunit "Hybris Order Status Events" = X,
+         page "Order Status Update Hybris" = X,
+         tabledata "ShipStatusUpdateToSFDCLineBuff" = RIMD,
+         table "ShipStatusUpdateToSFDCLineBuff" = X,
+         tabledata "ShipStatusUpdateToSFDCHdrBuff" = RIMD,
+         table "ShipStatusUpdateToSFDCHdrBuff" = X,
+         codeunit "Shipment Status SFDC Mgt" = X,
+         page ShipmentStatusUpdatetoSFDCHdr = X,
+         page ShipmentStatusUpdateLineSFDC = X,
+         tabledata "ShipStatusUpdToHybrisLineBuff" = RIMD,
+         table "ShipStatusUpdToHybrisLineBuff" = X,
+         tabledata "ShipStatusUpdToHybrisHdrBuff" = RIMD,
+         table "ShipStatusUpdToHybrisHdrBuff" = X,
+         codeunit "Shipment Status to Hybris Mgt" = X,
+         page "ShipStatusUpdToHybrisHdr" = X,
+         page "ShipStatusUpdToHybrisLine" = X,
+         tabledata "InvSnapshotHybrisBuff" = RIMD,
+         table "InvSnapshotHybrisBuff" = X,
+         tabledata "InvDeltaHybrisBuff" = RIMD,
+         table "InvDeltaHybrisBuff" = X,
+         codeunit "Inventory Update Hybris Mgt" = X,
+         page "Inventory Snapshot Hybris API" = X,
+         page "Inventory Delta Hybris API" = X,
+         tabledata "OrderStatusUpdToSFDCHdrBuff" = RIMD,
+         table "OrderStatusUpdToSFDCHdrBuff" = X,
+         tabledata "OrderStatusUpdToSFDCLineBuff" = RIMD,
+         table "OrderStatusUpdToSFDCLineBuff" = X,
+         page "OrderStatusUpdtoSFDCHdr" = X,
+         page "OrderStatusUpdtoSFDCLine" = X,
+         codeunit "Order Status SFDC Mgt" = X,
+         codeunit "Order Status SFDC Events" = X;
 }

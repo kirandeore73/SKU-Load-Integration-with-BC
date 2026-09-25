@@ -74,7 +74,7 @@ table 72014 "SKU Order Conf Line Buffer"
         {
             Caption = 'Confirmed Order Quantity UOM';
         }
-        field(110; "Schedule Line Order Quantity UOM"; Code[10])
+        field(110; "Schedule Line Order Qty UOM"; Code[10])
         {
             Caption = 'Schedule Line Order Quantity UOM';
         }

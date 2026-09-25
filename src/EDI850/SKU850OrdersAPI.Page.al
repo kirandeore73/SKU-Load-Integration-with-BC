@@ -478,6 +478,15 @@ page 72002 "EDI SSales Order Header API"
                         RegisterFieldSet(Rec.FieldNo("Ship Early"));
                     end;
                 }
+                field(shipPartial; Rec."Ship Partial")
+                {
+                    Caption = 'Ship Partial';
+
+                    trigger OnValidate()
+                    begin
+                        RegisterFieldSet(Rec.FieldNo("Ship Partial"));
+                    end;
+                }
                 field(shippingNotes; Rec."Shipping Notes")
                 {
                     Caption = 'Shipping Notes';

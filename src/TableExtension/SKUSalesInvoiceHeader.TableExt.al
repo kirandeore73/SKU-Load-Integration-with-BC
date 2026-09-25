@@ -27,5 +27,6 @@ tableextension 72009 "SKUSalesInvHeader" extends "Sales Invoice Header"
             Caption = 'Created From EDI 850';
             DataClassification = CustomerContent;
         }
+
     }
 }

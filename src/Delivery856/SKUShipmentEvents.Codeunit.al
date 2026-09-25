@@ -30,6 +30,8 @@ codeunit 72003 "SKUShipmentFieldCopyMgmt"
         Rec."SAP Recipient Internal ID" := SalesHeader."SAP Recipient Internal ID";
         Rec."EDI Tax Jurisdiction Code" := SalesHeader."EDI Tax Jurisdiction Code";
         Rec."Created From EDI 850" := SalesHeader."Created From EDI 850";
+        Rec."EDI Web Order No." := SalesHeader."EDI Web Order No.";
+        Rec."EDI Address Id" := SalesHeader."EDI Address Id";
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Sales Shipment Line", 'OnBeforeInsertEvent', '', false, false)]
@@ -45,6 +47,9 @@ codeunit 72003 "SKUShipmentFieldCopyMgmt"
             if not SalesLine.Get(SalesLine."Document Type"::Order, Rec."Order No.", Rec."Order Line No.") then
                 exit;
             Rec."SAP PO Line No." := SalesLine."SAP PO Line No.";
+            Rec."SAP Sales Order No." := SalesLine."SAP Sales Order No.";
+            Rec."SAP Sales Order Item ID" := SalesLine."SAP Sales Order Item ID";
+            Rec."EDI Quantity Ordered" := SalesLine.Quantity;
         end;
     end;
 
@@ -52,14 +57,23 @@ codeunit 72003 "SKUShipmentFieldCopyMgmt"
     local procedure OnAfterPostSalesDoc(var SalesHeader: Record "Sales Header"; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line"; SalesShptHdrNo: Code[20]; RetRcpHdrNo: Code[20]; SalesInvHdrNo: Code[20]; SalesCrMemoHdrNo: Code[20])
     var
         SalesShipmentHeader: Record "Sales Shipment Header";
+        ShipmentStatustoSFDCMgt: Codeunit "Shipment Status SFDC Mgt";
+        ShipmentStatusToHybrisMgt: Codeunit "Shipment Status to Hybris Mgt";
     begin
         // Create buffer for shipments only
         if SalesHeader."Created From EDI 850" then begin
             if SalesShptHdrNo = '' then
                 exit;
 
-            if SalesShipmentHeader.Get(SalesShptHdrNo) then
+            if SalesShipmentHeader.Get(SalesShptHdrNo) then begin
+                if not SalesShipmentHeader."Created From EDI 850" then
+                    exit;
+
                 CreateDeliveryBuffer(SalesShipmentHeader);
+                ShipmentStatustoSFDCMgt.CreateFromPostedShipment(SalesShipmentHeader);
+                if SalesShipmentHeader."EDI Web Order No." <> '' then
+                    ShipmentStatusToHybrisMgt.CreateFromPostedShipment(SalesShipmentHeader);
+            end;
         end;
     end;
 

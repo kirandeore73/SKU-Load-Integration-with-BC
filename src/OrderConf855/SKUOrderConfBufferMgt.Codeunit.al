@@ -102,7 +102,7 @@ codeunit 72010 "SKU Order Conf Buffer Mgt"
                 OrderConfLineBuffer."Promised Delivery Date" := SalesLine."Promised Delivery Date";
                 OrderConfLineBuffer."Due Date" := SalesLine."Shipment Date";
                 OrderConfLineBuffer."Schedule Line Order Quantity" := SalesLine.Quantity;
-                OrderConfLineBuffer."Schedule Line Order Quantity UOM" := SalesLine."Unit of Measure Code";
+                OrderConfLineBuffer."Schedule Line Order Qty UOM" := SalesLine."Unit of Measure Code";
                 OrderConfLineBuffer."Confirmed Order Quantity" := SalesLine.Quantity;
                 OrderConfLineBuffer."Confirmed Order Quantity UOM" := SalesLine."Unit of Measure Code";
                 OrderConfLineBuffer.Insert(true);

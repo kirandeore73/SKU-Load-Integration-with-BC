@@ -224,6 +224,106 @@ page 72001 "SKUIntegrationSetup"
                     Message('%1 delivery buffers deleted.', Counter);
                 end;
             }
+            action(ClearShipmentStatusSFDCBuffers)
+            {
+                Caption = 'Clear All Shipment Status SFDC Buffers';
+                ToolTip = 'Deletes all shipment status update to SFDC header and line records from the integration buffers.';
+                Image = Delete;
+
+                trigger OnAction()
+                var
+                    ShipmentStatusSFDCMgt: Codeunit "Shipment Status SFDC Mgt";
+                    Counter: Integer;
+                begin
+                    if not Confirm('Delete all shipment status update to SFDC buffers and lines? This cannot be undone.', false) then
+                        exit;
+
+                    Counter := ShipmentStatusSFDCMgt.DeleteAllShipmentStatusSFDCBuffers();
+                    Message('%1 shipment status SFDC buffers deleted.', Counter);
+                end;
+            }
+            action(ClearOrderStatusSFDCBuffers)
+            {
+                Caption = 'Clear All Order Status SFDC Buffers';
+                ToolTip = 'Deletes all order status update to SFDC header and line records from the integration buffers.';
+                Image = Delete;
+
+                trigger OnAction()
+                var
+                    OrderStatusSFDCMgt: Codeunit "Order Status SFDC Mgt";
+                    Counter: Integer;
+                begin
+                    if not Confirm('Delete all order status update to SFDC buffers and lines? This cannot be undone.', false) then
+                        exit;
+
+                    Counter := OrderStatusSFDCMgt.DeleteAllOrderStatusSFDCBuffers();
+                    Message('%1 order status SFDC buffers deleted.', Counter);
+                end;
+            }
+            action(RunInventoryFullUpdateHybris)
+            {
+                Caption = 'Run Inventory Full Update (Hybris)';
+                ToolTip = 'Recalculates available on hand qty for every item into the inventory snapshot buffer.';
+                Image = Refresh;
+
+                trigger OnAction()
+                var
+                    InventoryUpdateHybrisMgt: Codeunit "Inventory Update Hybris Mgt";
+                begin
+                    InventoryUpdateHybrisMgt.RunFullInventoryUpdate();
+                    Message('Inventory snapshot buffer refreshed for all items.');
+                end;
+            }
+            action(RunInventoryDeltaUpdateHybris)
+            {
+                Caption = 'Run Inventory Delta Update (Hybris)';
+                ToolTip = 'Stages only items whose available on hand qty changed since the last run.';
+                Image = Refresh;
+
+                trigger OnAction()
+                var
+                    InventoryUpdateHybrisMgt: Codeunit "Inventory Update Hybris Mgt";
+                begin
+                    InventoryUpdateHybrisMgt.RunDeltaInventoryUpdate();
+                    Message('Inventory delta buffer updated with changed items.');
+                end;
+            }
+            action(ClearInventorySnapshotHybrisBuffers)
+            {
+                Caption = 'Clear Inventory Snapshot Buffer (Hybris)';
+                ToolTip = 'Deletes all rows from the inventory snapshot buffer.';
+                Image = Delete;
+
+                trigger OnAction()
+                var
+                    InventoryUpdateHybrisMgt: Codeunit "Inventory Update Hybris Mgt";
+                    Counter: Integer;
+                begin
+                    if not Confirm('Delete all inventory snapshot buffer rows? This cannot be undone.', false) then
+                        exit;
+
+                    Counter := InventoryUpdateHybrisMgt.DeleteAllInventorySnapshotBuffers();
+                    Message('%1 inventory snapshot buffer rows deleted.', Counter);
+                end;
+            }
+            action(ClearInventoryDeltaHybrisBuffers)
+            {
+                Caption = 'Clear Inventory Delta Buffer (Hybris)';
+                ToolTip = 'Deletes all rows from the inventory delta buffer.';
+                Image = Delete;
+
+                trigger OnAction()
+                var
+                    InventoryUpdateHybrisMgt: Codeunit "Inventory Update Hybris Mgt";
+                    Counter: Integer;
+                begin
+                    if not Confirm('Delete all inventory delta buffer rows? This cannot be undone.', false) then
+                        exit;
+
+                    Counter := InventoryUpdateHybrisMgt.DeleteAllInventoryDeltaBuffers();
+                    Message('%1 inventory delta buffer rows deleted.', Counter);
+                end;
+            }
             action(PopulateOrderConfBuffers)
             {
                 Caption = 'Populate Order Confirmation Buffers';
